@@ -46,7 +46,7 @@ void MainWindow::on_pushButton_clicked()
     else
     {
         QPalette pa;
-        pa.setColor(QPalette::WindowText,Qt::black);
+        pa.setColor(QPalette::WindowText,Qt::green);
         ui->label->setPalette(pa);
         ui->label->setText("擦除成功");
     }
@@ -72,7 +72,7 @@ void MainWindow::on_pushButton_clicked()
     else
     {
         QPalette pa;
-        pa.setColor(QPalette::WindowText,Qt::black);
+        pa.setColor(QPalette::WindowText,Qt::green);
         ui->label->setPalette(pa);
         ui->label->setText("烧录成功");
     }
@@ -96,7 +96,7 @@ void MainWindow::on_pushButton_clicked()
     else
     {
         QPalette pa;
-        pa.setColor(QPalette::WindowText,Qt::darkBlue);
+        pa.setColor(QPalette::WindowText,Qt::green);
         ui->label->setPalette(pa);
         ui->label->setText("烧录成功");
     }
@@ -134,10 +134,11 @@ void MainWindow::on_pushButton_3_clicked()
 {
     ui->textBrowser->clear();
     ui->textBrowser->setText("1、安装了nRF5x-Command-Line-Tools_8_4_0_Installer.exe\r\n\
-2、ts102.hex放在与本该程序相同的目录下\r\n\
-3、存放的路径不能有中文\r\n\
-4、合并文件时把，nrf52832_xxaa_s132_bootloader.hex s132_nrf52_2.0.0_softdevice.hex nrf52832_xxaa_s132.hex 放在此exe同一个目录下\r\n\
-5、联系QQ：329410527");
+2、C:\\Program Files\\NordicSemiconductor\\nrf5x\bin\\nrfjprog.ini 中Family改为NRF52\r\n\
+3、ts102.hex放在与本该程序相同的目录下\r\n\
+4、存放的路径不能有中文，桌面也不行\r\n\
+5、合并文件时把，nrf52832_xxaa_s132_bootloader.hex s132_nrf52_2.0.0_softdevice.hex nrf52832_xxaa_s132.hex 放在此exe同一个目录下\r\n\
+6、联系QQ：329410527 ");
     QPalette pa;
     pa.setColor(QPalette::WindowText,Qt::black);
     ui->label->setPalette(pa);
