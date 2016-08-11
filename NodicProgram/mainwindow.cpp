@@ -11,6 +11,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->progressBar->setVisible(false);
+    ui->progressBar->setStyleSheet("QProgressBar::chunk { background-color: rgb(0, 0, 0) }");
+    //ui->progressBar->setStyleSheet("QProgressBar{border: 1px solid grey;border-radius: 5px;text-align: center;}"
+    //                         "QProgressBar::chunk{background-color: #CD96CD;width: 10px;margin: 0.5px;}");
+    //ui->progressBar->setGeometry(100, 100, 150, 23);
     //app.seWindowIcon(QIcon("nodic.ico"));
     //setWindowFlags(Qt::WindowCloseButtonHint); //只要关闭按钮
     //setWindowFlags(Qt::FramelessWindowHint);//设置无边框
@@ -94,6 +99,8 @@ void MainWindow::on_pushButton_clicked()
     pa.setColor(QPalette::WindowText,Qt::green);
     ui->label->setPalette(pa);
     ui->label->setText("开始...");
+    ui->progressBar->setVisible(true);
+    ui->progressBar->setValue(0);
     //执行cmd的相关命令
     QProcess p(0);
     //擦除
@@ -122,17 +129,20 @@ void MainWindow::on_pushButton_clicked()
     MyThread thread;
     thread.start();
     int thrCount=0;
+    ui->progressBar->setRange(0,5000);
+    //ui->progressBar->setModal(true);
     do
     {
         QCoreApplication::processEvents();/*Don't move it*/
-        //thrCount++;
+        thrCount++;
+        ui->progressBar->setValue(thrCount);
+        //msleep(1000);
+        QThread::usleep(3000);
         //ui->textBrowser->append(tr("等待")+tr("[%1]").arg(thrCount)+tr("次"));
     }while(thread.stop==false);
     thread.stop=false;
     thread.quit();
-
-
-
+    ui->progressBar->setValue(thrCount+(5000-thrCount)/2);
 
     //读取MAC地址
     p.start(READ_MAC_CMD);
@@ -220,6 +230,8 @@ void MainWindow::on_pushButton_clicked()
     }
     erase++;
     QString s;
+    ui->progressBar->setValue(5000);
+    ui->progressBar->setVisible(false);
     ui->textBrowser->append(tr("烧录成功第")+tr("[%1]").arg(erase)+tr("次")+tr("MAC")+tr("[%1]").arg(s.append(readCmdMac)));
 }
 
