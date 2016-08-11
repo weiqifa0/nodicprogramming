@@ -13,9 +13,13 @@ TEMPLATE = app
 RC_FILE = nodic.rc
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp
 
-HEADERS  += mainwindow.h
+SOURCES += main.cpp\
+        mainwindow.cpp \
+    mythread.cpp
+
+HEADERS  += mainwindow.h \
+    mythread.h
 
 FORMS    += mainwindow.ui
+DESTDIR  += "E:\project\github\nodicprogramming"

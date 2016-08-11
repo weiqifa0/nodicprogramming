@@ -3,6 +3,8 @@
 #include <QtDebug>
 #include <QDateTime>
 #include <QProcess>
+#include <mythread.h>
+#include <QFile>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,11 +22,78 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+//函 数 名：HexToAsc()
+//功能描述：把16进制转换为ASCII
+char MainWindow::IntToStr(char aChar)
+{
+    char ss;
+    printf("%s %d\n",__FUNCTION__,aChar);
+    switch(aChar)
+    {
+        case 0: ss= '0';break;
+        case 1: ss= '1';break;
+        case 2: ss= '2';break;
+        case 3: ss= '3';break;
+        case 4: ss= '4';break;
+        case 5: ss= '5';break;
+        case 6: ss= '6';break;
+        case 7: ss= '7';break;
+        case 8: ss= '8';break;
+        case 9: ss= '9';break;
 
+        case 10: ss= 'A';break;
+        case 11: ss= 'B';break;
+        case 12: ss= 'C';break;
+        case 13: ss= 'D';break;
+        case 14: ss= 'E';break;
+        case 15: ss= 'F';break;
+        default:break;
+    }
+    printf("%s %c\n",__FUNCTION__,ss);
+    return ss;
+}
+//函 数 名：StrToInt()
+//功能描述：把字符转换成对应的数字，比如a转换成10
+char MainWindow::StrToInt(char aChar)
+{
+    char ss;
+    printf("%s %c\n",__FUNCTION__,aChar);
+    switch(aChar)
+    {
+        case '0': ss= 0;break;
+        case '1': ss= 1;break;
+        case '2': ss= 2;break;
+        case '3': ss= 3;break;
+        case '4': ss= 4;break;
+        case '5': ss= 5;break;
+        case '6': ss= 6;break;
+        case '7': ss= 7;break;
+        case '8': ss= 8;break;
+        case '9': ss= 9;break;
+
+        case 'A': ss= 10;break;
+        case 'B': ss= 11;break;
+        case 'C': ss= 12;break;
+        case 'D': ss= 13;break;
+        case 'E': ss= 14;break;
+        case 'F': ss= 15;break;
+        default:break;
+    }
+    printf("%s %d\n",__FUNCTION__,ss);
+    return ss;
+}
 void MainWindow::on_pushButton_clicked()
 {
     QByteArray readCmd;
-    QByteArray readCmd2;
+    QByteArray readCm;
+    QByteArray readCmdMac;
+    char readCharMac;
+    static unsigned long erase=0;
+    int i=0;
+    QPalette pa;
+    pa.setColor(QPalette::WindowText,Qt::green);
+    ui->label->setPalette(pa);
+    ui->label->setText("开始...");
     //执行cmd的相关命令
     QProcess p(0);
     //擦除
@@ -50,32 +119,28 @@ void MainWindow::on_pushButton_clicked()
         ui->label->setPalette(pa);
         ui->label->setText("擦除成功");
     }
-    //下载
-    p.start(DOWNLOAD_CMD);
+    MyThread thread;
+    thread.start();
+    int thrCount=0;
+    do
+    {
+        QCoreApplication::processEvents();/*Don't move it*/
+        //thrCount++;
+        //ui->textBrowser->append(tr("等待")+tr("[%1]").arg(thrCount)+tr("次"));
+    }while(thread.stop==false);
+    thread.stop=false;
+    thread.quit();
+
+
+
+
+    //读取MAC地址
+    p.start(READ_MAC_CMD);
     p.waitForStarted();
     p.waitForFinished();
-    readCmd="";
-    readCmd = p.readAllStandardOutput();
-    readCmd+=p.readAllStandardError();
-    qDebug()<< readCmd;
-    //在控件上面输出结果
-    ui->textBrowser->append(readCmd);
-    //提示
-    if(readCmd.contains("ERROR"))
-    {
-        QPalette pa;
-        pa.setColor(QPalette::WindowText,Qt::red);
-        ui->label->setPalette(pa);
-        ui->label->setText("烧录失败");
-        return;
-    }
-    else
-    {
-        QPalette pa;
-        pa.setColor(QPalette::WindowText,Qt::green);
-        ui->label->setPalette(pa);
-        ui->label->setText("烧录成功");
-    }
+    //获取MAC地址
+    readCm  = p.readAllStandardOutput().trimmed();
+    //复位 如果不复位的话，板子现在在烧录模式，灯还一直亮着
     //复位
     p.start(RESET_CMD);
     p.waitForStarted();
@@ -84,6 +149,7 @@ void MainWindow::on_pushButton_clicked()
     readCmd = p.readAllStandardOutput();
     readCmd+=p.readAllStandardError();
     ui->textBrowser->append(readCmd);
+
     //提示
     if(readCmd.contains("ERROR"))
     {
@@ -100,6 +166,61 @@ void MainWindow::on_pushButton_clicked()
         ui->label->setPalette(pa);
         ui->label->setText("烧录成功");
     }
+    qDebug()<<readCm;
+    p.close();
+    //判断数据是否正确，不正确就返回
+    if(readCm.size()<5)
+    {
+         ui->textBrowser->append(readCmdMac);
+         ui->textBrowser->append(tr("1查看是否安装了jlink驱动，连接了jlink并连接了设备......."));
+         return;
+    }
+
+    readCmd = readCm.mid(15,17);
+    //去掉空格
+    readCmdMac.resize(12);
+    for(int j=0;j<readCmd.size();j++)
+    {
+        if(readCmd.at(j)!=' ')
+        {
+            readCmdMac[i++]=(readCmd.at(j));
+        }
+    }
+    readCmdMac[i]='\0';
+    //把最后一个字节的那个位改变一下
+    //qDebug("%x",readCmdMac.data()[10]);
+    readCharMac=readCmdMac.data()[10];
+    readCharMac=StrToInt(readCharMac);
+    //qDebug("%x",readCharMac);
+    readCharMac|=0xC;
+    //qDebug("%x",readCharMac);
+    readCmdMac.data()[10]=IntToStr(readCharMac);
+    //qDebug()<<readCmdMac.data()[10];
+    qDebug()<<readCmdMac;
+    qDebug("%d",readCmdMac.size());
+    if(readCmdMac.size()<13)
+    {
+        ui->textBrowser->append(readCmdMac);
+        ui->textBrowser->append(tr("2查看是否安装了jlink驱动，连接了jlink并连接了设备......."));
+        return;
+    }
+
+    //把mac地址保存到文件里面
+    QFile file("macAdress.txt");
+    if(file.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
+    {
+        QTextStream stream( &file );
+        stream << readCmdMac << "\r\n";
+        file.close();
+        ui->textBrowser->append(tr("保存MAC地址成功..."));
+    }
+    else
+    {
+        ui->textBrowser->append(tr("打开文件失败..."));
+    }
+    erase++;
+    QString s;
+    ui->textBrowser->append(tr("烧录成功第")+tr("[%1]").arg(erase)+tr("次")+tr("MAC")+tr("[%1]").arg(s.append(readCmdMac)));
 }
 
 void MainWindow::on_pushButton_2_clicked()
@@ -122,12 +243,15 @@ void MainWindow::on_pushButton_2_clicked()
     ui->textBrowser->append(readCmd);
 
     readCmd="";
-    p.start("del temp.hex");
+    p.start("cmd.exe");
+    p.write(DEL_TEMP);
+    p.write ("exit\n\r");
     p.waitForStarted();
     p.waitForFinished();
     readCmd = p.readAllStandardOutput();
     readCmd+=p.readAllStandardError();
     ui->textBrowser->append(readCmd);
+    p.close();
 }
 
 void MainWindow::on_pushButton_3_clicked()
