@@ -125,7 +125,7 @@
            </font>
           </property>
           <property name="text">
-           <string>清空提示</string>
+           <string>提示</string>
           </property>
          </widget>
         </item>
