@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    QApplication::setStyle("windows");
     ui->setupUi(this);
     ui->progressBar->setVisible(false);
     ui->progressBar->setStyleSheet("QProgressBar::chunk { background-color: rgb(0, 0, 0) }");
@@ -198,14 +199,14 @@ void MainWindow::on_pushButton_clicked()
     }
     readCmdMac[i]='\0';
     //把最后一个字节的那个位改变一下
-    //qDebug("%x",readCmdMac.data()[10]);
+    qDebug("%x",readCmdMac.data()[10]);
     readCharMac=readCmdMac.data()[10];
     readCharMac=StrToInt(readCharMac);
-    //qDebug("%x",readCharMac);
+    qDebug("%x",readCharMac);
     readCharMac|=0xC;
-    //qDebug("%x",readCharMac);
+    qDebug("%x",readCharMac);
     readCmdMac.data()[10]=IntToStr(readCharMac);
-    //qDebug()<<readCmdMac.data()[10];
+    qDebug()<<readCmdMac.data()[10];
     qDebug()<<readCmdMac;
     qDebug("%d",readCmdMac.size());
     if(readCmdMac.size()<13)
@@ -214,13 +215,26 @@ void MainWindow::on_pushButton_clicked()
         ui->textBrowser->append(tr("2查看是否安装了jlink驱动，连接了jlink并连接了设备......."));
         return;
     }
-
+    QByteArray readCmdMacNew;
+    readCmdMacNew.resize(12);//大小修改成12
+    readCmdMacNew.data()[0]=readCmdMac.data()[10];
+    readCmdMacNew.data()[1]=readCmdMac.data()[11];
+    readCmdMacNew.data()[2]=readCmdMac.data()[8];
+    readCmdMacNew.data()[3]=readCmdMac.data()[9];
+    readCmdMacNew.data()[4]=readCmdMac.data()[6];
+    readCmdMacNew.data()[5]=readCmdMac.data()[7];
+    readCmdMacNew.data()[6]=readCmdMac.data()[4];
+    readCmdMacNew.data()[7]=readCmdMac.data()[5];
+    readCmdMacNew.data()[8]=readCmdMac.data()[2];
+    readCmdMacNew.data()[9]=readCmdMac.data()[3];
+    readCmdMacNew.data()[10]=readCmdMac.data()[0];
+    readCmdMacNew.data()[11]=readCmdMac.data()[1];
     //把mac地址保存到文件里面
     QFile file("macAdress.txt");
     if(file.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
     {
         QTextStream stream( &file );
-        stream << readCmdMac << "\r\n";
+        stream << readCmdMacNew << "\r\n";
         file.close();
         ui->textBrowser->append(tr("保存MAC地址成功..."));
     }
@@ -231,8 +245,8 @@ void MainWindow::on_pushButton_clicked()
     erase++;
     QString s;
     ui->progressBar->setValue(5000);
-    ui->progressBar->setVisible(false);
-    ui->textBrowser->append(tr("烧录成功第")+tr("[%1]").arg(erase)+tr("次")+tr("MAC")+tr("[%1]").arg(s.append(readCmdMac)));
+    //ui->progressBar->setVisible(false);
+    ui->textBrowser->append(tr("烧录成功第")+tr("[%1]").arg(erase)+tr("次")+tr("MAC")+tr("[%1]").arg(s.append(readCmdMacNew)));
 }
 
 void MainWindow::on_pushButton_2_clicked()
