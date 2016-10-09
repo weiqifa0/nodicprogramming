@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
+    //qDebug()<<runPath;
     QApplication::setStyle("windows");
     ui->setupUi(this);
     ui->progressBar->setVisible(false);
@@ -22,6 +24,18 @@ MainWindow::MainWindow(QWidget *parent) :
     //setWindowFlags(Qt::FramelessWindowHint);//设置无边框
     //setAttribute(Qt::WA_TranslucentBackground, true);//设置背景透明
     this->setFixedSize( this->width(),this->height());//设置窗体固定大小，不能改变窗体大小
+    QString readCmd;//=QStringLiteral("你好中文！");
+    //执行cmd的相关命令
+    QProcess p(0);
+
+    //判断文件是否存在 "cmd", QStringList()<<"/c"<<"dir"
+    p.start("cmd", QStringList()<<"/c"<<"if exist ts102.hex (echo Ts102.hex File exists ) else (echo Ts102.hex File does not exist,please copy here)");
+    p.waitForStarted();
+    p.waitForFinished();
+    readCmd = p.readAllStandardOutput();
+    readCmd+=p.readAllStandardError();
+    ui->textBrowser->append(readCmd);
+    qDebug()<<readCmd;
 }
 
 MainWindow::~MainWindow()
@@ -102,8 +116,20 @@ void MainWindow::on_pushButton_clicked()
     ui->label->setText("开始...");
     ui->progressBar->setVisible(true);
     ui->progressBar->setValue(0);
+
     //执行cmd的相关命令
     QProcess p(0);
+
+    //判断文件是否存在 "cmd", QStringList()<<"/c"<<"dir"
+    p.start("cmd", QStringList()<<"/c"<<"if exist ts102.hex (echo ts102.hex File exists ) else (echo ts102.hex File does not exist,please copy here)");
+    p.waitForStarted();
+    p.waitForFinished();
+    readCmd = p.readAllStandardOutput();
+    readCmd+=p.readAllStandardError();
+    ui->textBrowser->append(readCmd);
+    qDebug()<<readCmd;
+
+
     //擦除
     p.start(ERASE_ALL_CMD);
     p.waitForStarted();
