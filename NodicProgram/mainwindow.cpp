@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //setWindowFlags(Qt::WindowCloseButtonHint); //只要关闭按钮
     //setWindowFlags(Qt::FramelessWindowHint);//设置无边框
     //setAttribute(Qt::WA_TranslucentBackground, true);//设置背景透明
-    this->setFixedSize( this->width(),this->height());//设置窗体固定大小，不能改变窗体大小
+    //this->setFixedSize( this->width(),this->height());//设置窗体固定大小，不能改变窗体大小
     QString readCmd;//=QStringLiteral("你好中文！");
     //执行cmd的相关命令
     QProcess p(0);
