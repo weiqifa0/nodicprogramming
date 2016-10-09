@@ -12,8 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     //qDebug()<<runPath;
-    QApplication::setStyle("windows");
+    //QApplication::setStyle("windows");
     ui->setupUi(this);
+    //ui->groupBox_4->setStyleSheet("border:none");
     ui->progressBar->setVisible(false);
     ui->progressBar->setStyleSheet("QProgressBar::chunk { background-color: rgb(0, 0, 0) }");
     //ui->progressBar->setStyleSheet("QProgressBar{border: 1px solid grey;border-radius: 5px;text-align: center;}"
