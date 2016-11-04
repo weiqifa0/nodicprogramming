@@ -199,10 +199,10 @@ void MainWindow::on_pushButton_clicked()
     }
     else
     {
-        QPalette pa;
-        pa.setColor(QPalette::WindowText,Qt::green);
-        ui->label->setPalette(pa);
-        ui->label->setText("烧录成功");
+//        QPalette pa;
+//        pa.setColor(QPalette::WindowText,Qt::green);
+//        ui->label->setPalette(pa);
+//        ui->label->setText("烧录成功");
     }
     qDebug()<<readCm;
     p.close();
@@ -274,6 +274,13 @@ void MainWindow::on_pushButton_clicked()
     ui->progressBar->setValue(5000);
     //ui->progressBar->setVisible(false);
     ui->textBrowser->append(tr("烧录成功第")+tr("[%1]").arg(erase)+tr("次")+tr("MAC")+tr("[%1]").arg(s.append(readCmdMacNew)));
+    {
+    QPalette pa;
+    pa.setColor(QPalette::WindowText,Qt::green);
+    ui->label->setPalette(pa);
+    ui->label->setText("烧录成功\r\n"+QString::number(erase, 10));
+    }
+
 }
 
 void MainWindow::on_pushButton_2_clicked()
