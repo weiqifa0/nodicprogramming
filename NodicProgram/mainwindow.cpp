@@ -26,10 +26,15 @@ MainWindow::MainWindow(QWidget *parent) :
     readCmd+=p.readAllStandardError();
     ui->textBrowser->append(readCmd);
     qDebug()<<readCmd;
-    if(ui->checkBox->isChecked())
+    if(ui->checkBox_3->isChecked())
     {
-        ui->lineEdit->setEnabled(false);
+        ui->lineEdit_2->setEnabled(false);
     }
+    //设置快捷键
+    ui->pushButton->setFocus();
+    ui->pushButton->setShortcut(QKeySequence::InsertParagraphSeparator);//设置快捷键为键盘的“回车”键
+    ui->pushButton->setShortcut(Qt::Key_Enter);
+    ui->pushButton->setShortcut(Qt::Key_Return);
 }
 
 MainWindow::~MainWindow()
@@ -167,16 +172,7 @@ void MainWindow::on_pushButton_clicked()
     p.waitForFinished();
     //获取MAC地址
     readCm  = p.readAllStandardOutput().trimmed();
-    //复位 如果不复位的话，板子现在在烧录模式，灯还一直亮着
-    //复位
-    p.start(RESET_CMD);
-    p.waitForStarted();
-    p.waitForFinished();
-    readCmd="";
-    readCmd = p.readAllStandardOutput();
-    readCmd+=p.readAllStandardError();
-    ui->textBrowser->append(readCmd);
-    if(ui->checkBox->isChecked()==true)
+    if(ui->checkBox_3->isChecked()==true)
     {
         QByteArray macValue=ui->lineEdit->text().right(8).toLatin1();
         qDebug()<<macValue;
@@ -188,6 +184,7 @@ void MainWindow::on_pushButton_clicked()
         QProcess p(0);
         //写入数据
         QString cmdWriteValue="nrfjprog.exe --memwr 0x10001094 --val ";
+        ui->textBrowser->append(cmdWriteValue+ui->lineEdit->text());
         cmdWriteValue.append(QString::number(macValueInt));
         qDebug()<<cmdWriteValue;
         p.start(cmdWriteValue);
@@ -204,6 +201,31 @@ void MainWindow::on_pushButton_clicked()
         else
         {
             ui->textBrowser->append(tr("##########################写入硬件版本号成功.###############"));
+        }
+    }
+    //向flash写入值
+    if(ui->checkBox_4->isChecked()==true)
+    {
+        QByteArray readCmd;
+        QProcess p(0);
+        //写入数据
+        QString cmdWriteValue="nrfjprog.exe --memwr 0x10001098 --val 0xFF12FF34";
+        ui->textBrowser->append(cmdWriteValue);
+        qDebug()<<cmdWriteValue;
+        p.start(cmdWriteValue);
+        p.waitForStarted();
+        p.waitForFinished();
+        readCmd = p.readAllStandardOutput();
+        readCmd+= p.readAllStandardError();
+        ui->textBrowser->append(readCmd);
+        if(readCmd.contains("ERROR"))
+        {
+            ui->label->setText("FLASH写入失败");
+            return;
+        }
+        else
+        {
+            ui->textBrowser->append(tr("##########################FLASH写入硬件版本号成功.###############"));
         }
     }
     //提示
@@ -291,7 +313,14 @@ void MainWindow::on_pushButton_clicked()
     ui->label->setPalette(pa);
     ui->label->setText("烧录成功\r\n"+QString::number(erase, 10));
     }
-
+    //复位
+    p.start(RESET_CMD);
+    p.waitForStarted();
+    p.waitForFinished();
+    readCmd="";
+    readCmd = p.readAllStandardOutput();
+    readCmd+=p.readAllStandardError();
+    ui->textBrowser->append(readCmd);
 }
 
 void MainWindow::on_pushButton_2_clicked()
@@ -325,7 +354,113 @@ void MainWindow::on_pushButton_2_clicked()
     p.close();
 }
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_writeHButton_3_clicked()
+{
+    QByteArray readCmd;
+    QProcess p(0);
+    //写入数据
+    QString cmdWriteValue="nrfjprog.exe --memwr 0x10001098 --val 0xFF12FF34";
+    ui->textBrowser->append(cmdWriteValue);
+    qDebug()<<cmdWriteValue;
+    p.start(cmdWriteValue);
+    p.waitForStarted();
+    p.waitForFinished();
+    readCmd = p.readAllStandardOutput();
+    readCmd+= p.readAllStandardError();
+    ui->textBrowser->append(readCmd);
+    if(readCmd.contains("not erased"))
+    {
+        ui->textBrowser->append(tr("！！！！！！！！！！！！flash里面已经有值，不能覆盖写入"));
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::red);
+        ui->label->setPalette(pa);
+        ui->label->setText("不能重复写入");
+    }
+    else if(readCmd.contains("ERROR"))
+    {
+        ui->textBrowser->append(tr("！！！！！！！！！！！！写入出错，请检查。。。。"));
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::red);
+        ui->label->setPalette(pa);
+        ui->label->setText("失败");
+    }
+    else
+    {
+        ui->textBrowser->append(tr("############写入成功"));
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::green);
+        ui->label->setPalette(pa);
+        ui->label->setText("写入成功");
+    }
+}
+
+void MainWindow::on_readHButton_2_clicked()
+{
+    //nrfjprog.exe --memrd 0x10001094 --n 8
+    QByteArray readCmd;
+    QProcess p(0);
+    //写入数据
+    QString cmdWriteValue="nrfjprog.exe --memrd 0x10001094 --n 4";
+    ui->textBrowser->append(cmdWriteValue);
+    qDebug()<<cmdWriteValue;
+    p.start(cmdWriteValue);
+    p.waitForStarted();
+    p.waitForFinished();
+    readCmd = p.readAllStandardOutput();
+    readCmd+= p.readAllStandardError();
+    ui->textBrowser->append(readCmd);
+    qDebug()<<readCmd;
+    if(readCmd.contains("ERROR"))
+    {
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::red);
+        ui->label->setPalette(pa);
+        ui->label->setText("读取失败");
+    }
+    else
+    {
+        ui->textBrowser->append(tr("########################读取成功"));
+        QString stringSuccessShow=readCmd.right(12);
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::green);
+        ui->label->setPalette(pa);
+        ui->label->setText("读取成功");
+    }
+}
+
+void MainWindow::on_readHButton_3_clicked()
+{
+    QByteArray readCmd;
+    QProcess p(0);
+    //写入数据
+    QString cmdWriteValue="nrfjprog.exe --memrd 0x10001098 --n 4";
+    ui->textBrowser->append(cmdWriteValue);
+    qDebug()<<cmdWriteValue;
+    p.start(cmdWriteValue);
+    p.waitForStarted();
+    p.waitForFinished();
+    readCmd = p.readAllStandardOutput();
+    readCmd+= p.readAllStandardError();
+    ui->textBrowser->append(readCmd);
+    qDebug()<<readCmd;
+    if(readCmd.contains("ERROR"))
+    {
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::red);
+        ui->label->setPalette(pa);
+        ui->label->setText("读取失败");
+    }
+    else
+    {
+        ui->textBrowser->append(tr("########################读取成功"));
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::green);
+        ui->label->setPalette(pa);
+        ui->label->setText("读取成功");
+    }
+}
+
+void MainWindow::on_pushButton_5_clicked()
 {
     ui->textBrowser->clear();
     ui->textBrowser->setText("1、安装了nRF5x-Command-Line-Tools_8_4_0_Installer.exe\r\n\
@@ -340,7 +475,7 @@ void MainWindow::on_pushButton_3_clicked()
     ui->label->setText("烧录结果");
 }
 
-void MainWindow::on_writeHButton_clicked()
+void MainWindow::on_writeHButton_2_clicked()
 {
     QByteArray macValue=ui->lineEdit->text().right(8).toLatin1();
     qDebug()<<macValue;
@@ -352,6 +487,7 @@ void MainWindow::on_writeHButton_clicked()
     QProcess p(0);
     //写入数据
     QString cmdWriteValue="nrfjprog.exe --memwr 0x10001094 --val ";
+    ui->textBrowser->append(cmdWriteValue+ui->lineEdit->text());
     cmdWriteValue.append(QString::number(macValueInt));
     qDebug()<<cmdWriteValue;
     p.start(cmdWriteValue);
@@ -386,40 +522,7 @@ void MainWindow::on_writeHButton_clicked()
     }
 }
 
-void MainWindow::on_readHButton_clicked()
+void MainWindow::on_checkBox_3_clicked(bool checked)
 {
-    //nrfjprog.exe --memrd 0x10001094 --n 8
-    QByteArray readCmd;
-    QProcess p(0);
-    //写入数据
-    QString cmdWriteValue="nrfjprog.exe --memrd 0x10001094 --n 4";
-    qDebug()<<cmdWriteValue;
-    p.start(cmdWriteValue);
-    p.waitForStarted();
-    p.waitForFinished();
-    readCmd = p.readAllStandardOutput();
-    readCmd+= p.readAllStandardError();
-    ui->textBrowser->append(readCmd);
-    qDebug()<<readCmd;
-    if(readCmd.contains("ERROR"))
-    {
-        QPalette pa;
-        pa.setColor(QPalette::WindowText,Qt::red);
-        ui->label->setPalette(pa);
-        ui->label->setText("读取失败");
-    }
-    else
-    {
-        ui->textBrowser->append(tr("########################读取成功"));
-        QString stringSuccessShow=readCmd.right(12);
-        QPalette pa;
-        pa.setColor(QPalette::WindowText,Qt::green);
-        ui->label->setPalette(pa);
-        ui->label->setText("读取成功");
-    }
-}
-
-void MainWindow::on_checkBox_clicked(bool checked)
-{
-    ui->lineEdit->setEnabled(!checked);
+    ui->lineEdit_2->setEnabled(!checked);
 }

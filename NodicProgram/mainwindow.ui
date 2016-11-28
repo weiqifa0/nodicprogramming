@@ -160,7 +160,7 @@ p, li { white-space: pre-wrap; }
                 <x>110</x>
                 <y>60</y>
                 <width>111</width>
-                <height>51</height>
+                <height>31</height>
                </rect>
               </property>
               <property name="text">
@@ -171,9 +171,9 @@ p, li { white-space: pre-wrap; }
               <property name="geometry">
                <rect>
                 <x>10</x>
-                <y>110</y>
+                <y>120</y>
                 <width>211</width>
-                <height>41</height>
+                <height>31</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -203,13 +203,13 @@ p, li { white-space: pre-wrap; }
               <property name="geometry">
                <rect>
                 <x>10</x>
-                <y>30</y>
+                <y>40</y>
                 <width>211</width>
-                <height>31</height>
+                <height>21</height>
                </rect>
               </property>
               <property name="text">
-               <string>提示</string>
+               <string>Clear</string>
               </property>
              </widget>
              <widget class="QPushButton" name="writeHButton">
@@ -218,12 +218,182 @@ p, li { white-space: pre-wrap; }
                 <x>10</x>
                 <y>60</y>
                 <width>101</width>
-                <height>51</height>
+                <height>31</height>
                </rect>
               </property>
               <property name="text">
                <string>写入硬件版本号</string>
               </property>
+             </widget>
+             <widget class="QCheckBox" name="checkBox_2">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>27</y>
+                <width>201</width>
+                <height>16</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>烧录flash写入值[0x10001098]</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QGroupBox" name="groupBox_5">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>230</width>
+                <height>157</height>
+               </rect>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>157</height>
+               </size>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <widget class="QCheckBox" name="checkBox_3">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>10</y>
+                 <width>111</width>
+                 <height>16</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>烧录写入版本号</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="readHButton_2">
+               <property name="geometry">
+                <rect>
+                 <x>110</x>
+                 <y>60</y>
+                 <width>111</width>
+                 <height>31</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>读出硬件版本号</string>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="pushButton_4">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>120</y>
+                 <width>211</width>
+                 <height>31</height>
+                </rect>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>合并文件</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="lineEdit_2">
+               <property name="geometry">
+                <rect>
+                 <x>119</x>
+                 <y>10</y>
+                 <width>101</width>
+                 <height>20</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>0x31303201</string>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="pushButton_5">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>40</y>
+                 <width>211</width>
+                 <height>21</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>提示</string>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="writeHButton_2">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>60</y>
+                 <width>101</width>
+                 <height>31</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>写入硬件版本号</string>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="checkBox_4">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>27</y>
+                 <width>201</width>
+                 <height>16</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>烧录flash写入值[0x10001098]</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="writeHButton_3">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>90</y>
+                 <width>101</width>
+                 <height>31</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>FLASH写值</string>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="readHButton_3">
+               <property name="geometry">
+                <rect>
+                 <x>110</x>
+                 <y>90</y>
+                 <width>111</width>
+                 <height>31</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>FLASH读值</string>
+               </property>
+              </widget>
              </widget>
             </widget>
            </item>

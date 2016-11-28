@@ -29,13 +29,17 @@ private slots:
 
     void on_pushButton_2_clicked();
 
-    void on_pushButton_3_clicked();
+    void on_writeHButton_3_clicked();
 
-    void on_writeHButton_clicked();
+    void on_readHButton_2_clicked();
 
-    void on_readHButton_clicked();
+    void on_readHButton_3_clicked();
 
-    void on_checkBox_clicked(bool checked);
+    void on_pushButton_5_clicked();
+
+    void on_writeHButton_2_clicked();
+
+    void on_checkBox_3_clicked(bool checked);
 
 private:
 };
